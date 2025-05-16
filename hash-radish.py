@@ -9,7 +9,7 @@
 import hashlib
 
 
-def hasher(userInput, algorithm) -> str:
+def hasher(userInput: str, algorithm: str) -> str | None:
     '''
     Generate a hash value using the proveded input
     and algorithm.
@@ -30,7 +30,7 @@ def hasher(userInput, algorithm) -> str:
 
     # Check for zero input
     if not userInput:
-        print(" [ERROR] No input proveded.")
+        print(" [ERROR] No input provided.")
         return None
 
     # Dictionary of available hash algorithms
@@ -47,7 +47,7 @@ def hasher(userInput, algorithm) -> str:
 
     try:
         # Convert unserInput into bytes
-        encodedInput = userInput.encode('utf-8')
+        encodedInput: bytes = userInput.encode('utf-8')
 
         # Create hasher object
         hasher = algorithms[algorithm]()
@@ -62,6 +62,7 @@ def hasher(userInput, algorithm) -> str:
         return None
     except Exception as error:
         print(f"[ERROR] {error}")
+        return None
 
 
 def main():
