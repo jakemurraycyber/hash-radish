@@ -6,7 +6,7 @@ class Menu:
         self.title = title
         self.options = options
 
-    def displayMenu(self) -> str:
+    def displayMenu(self) -> None:
         # Prints Menu title with same-length line break
         lineBreak = '-' * len(self.title)
         print(f"\n{self.title}")
