@@ -6,7 +6,8 @@
 # By: Jake Murray
 #
 ##########################
-import hashlib
+import hasher
+import menus
 
 def hasher(userInput: str, algorithm: str) -> str | None:
     '''
@@ -27,26 +28,18 @@ def hasher(userInput: str, algorithm: str) -> str | None:
         Generated hash string.
     '''
 
-    # Dictionary of available hash algorithms
+    # List of available hash algorithms
     # User can either type out algorithm, or enter the relevant number selection.
-    ALGORITHMS = {
-            'sha224': hashlib.sha224,
-            'sha256': hashlib.sha256,
-            'sha384': hashlib.sha384,
-            'sha512': hashlib.sha512,
-            'sha3-224': hashlib.sha3_224,
-            'sha3-256': hashlib.sha3_256,
-            'sha3-384': hashlib.sha3_384,
-            'sha3-512': hashlib.sha3_512,
-            '1': hashlib.sha224,
-            '2': hashlib.sha256,
-            '3': hashlib.sha384,
-            '4': hashlib.sha512,
-            '5': hashlib.sha3_224,
-            '6': hashlib.sha3_256,
-            '7': hashlib.sha3_384,
-            '8': hashlib.sha3_512
-    }
+    ALGORITHMS = [
+            'sha224',
+            'sha256',
+            'sha384',
+            'sha512',
+            'sha3-224',
+            'sha3-256',
+            'sha3-384',
+            'sha3-512'
+    ]
 
     # Check for zero input
     if not userInput:

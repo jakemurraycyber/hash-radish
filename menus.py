@@ -2,7 +2,7 @@
 
 class Menu:
 
-    def __init__(self, title: str, options: list = []) -> None:
+    def __init__(self, title: str, options: list[str] = []) -> None:
         self.title = title
         self.options = options
 
@@ -19,13 +19,13 @@ class Menu:
 
 
 class SubMenu(Menu):
-    def __init__(self, parent: str, title: str, options: list = []) -> None:
+    def __init__(self, parent: object, title: str, options: list[str] = []) -> None:
         super().__init__(title, options)
         self.parent = parent
 
     # return to previous/parent menu
     def goBack(self):
-        return self.parent.displayMenu()
+        return self.parent
 
 
 mainOptions = [
@@ -34,6 +34,7 @@ mainOptions = [
     '3. line input'
     ]
 
+# TESTING
 mainMenu = Menu('Main Menu', mainOptions)
 mainMenu.addOption(('"x" to exit'))
 currentMenu = mainMenu
