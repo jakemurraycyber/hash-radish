@@ -14,10 +14,10 @@ Returns:
 import hashlib
 
 class Hasher:
-    def __init__(self, input: str, algorithm: str) -> None:
+    def __init__(self, input: str, algorithm: str, isFile: bool) -> None:
         self.input = input
         self.algorithm = algorithm
-
+        self.isFile = isFile # flag to indicate if input is a file
 
     def encodeInput(self) -> bytes:
         # Encode input to be hashed
@@ -31,6 +31,19 @@ class Hasher:
         h.update(encodedInput)
         return h.hexdigest()
     
+    def hashFile(self, chunkSize: int = 4096) -> str:
+        # Hash file in chunks
+        if not self.isFile:
+            raise ValueError("Input is not a filepath.")
+        h = hashlib.new(self.algorithm, usedforsecurity=True)
+        with open(self.input, 'rb') as file:
+            while True:
+                chunk = file.read(chunkSize)
+                if not chunk:
+                    break
+                h.update(chunk)
+        return h.hexdigest()
+
     def hash(self) -> str:
         # This method is just for convenience, combining 
         # encoding and hashing methods
