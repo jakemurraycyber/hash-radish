@@ -1,8 +1,10 @@
+![Python](https://img.shields.io/badge/python-3.6+-blue.svg)
+
 # Hash Radish
 ### By Jake Murray
 ---
 Hash Radish is an easy to use, lightweight hashing program that can be used on
-any operating system with Python 3.10 or newer installed.
+any operating system with Python 3.6 or newer installed.
 Hashes are a great way to verify the integrity of information. Hash Radish
 will give you an easy to use method for generating hashes with the option of 
 several different hashing algorithms. 
