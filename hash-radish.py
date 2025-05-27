@@ -8,6 +8,7 @@
 ##########################
 from hasher import Hasher
 from menus import Menu, SubMenu
+import os
 
 def getMenuChoice() -> str:
     menuChoice: str = str(input('\n>> ').lower().strip())
@@ -36,8 +37,10 @@ def main():
     AlgMenu = SubMenu(MainMenu, ALGTITLE, ALGORITHMS)
 
     # Set initial user choice, active menu, and start program loop
-    currentMenu = MainMenu
-    menuChoice = ''
+    currentMenu: 'Menu' = MainMenu
+    menuChoice: str = ''
+    userInput: str | None = None # stores user input or filepath
+    isFile: bool = False # tracks if user input is a filepath
 
     while menuChoice != 'x':
         currentMenu.displayMenu()
@@ -54,6 +57,8 @@ def main():
         # Handle return to main menu
         elif menuChoice == 'b':
             currentMenu = MainMenu
+            userInput = None
+            isFile = False
             continue
         
         # Handle Main Menu
@@ -65,8 +70,16 @@ def main():
                     continue
                 currentMenu = AlgMenu
             elif optionIndex == 1: # File input not implemented yet
-                print("This functionality is still in the works.")
-                continue
+                filePath = str(input("Enter the file path to hash:\n>> ")).strip()
+                if not filePath:
+                    print("[ERROR] No file path provided.")
+                    continue
+                if not os.path.isfile(filePath):
+                    print("[ERROR] Invalid file path or file does not exist.")
+                    continue
+                userInput = filePath
+                isFile = True
+                currentMenu = AlgMenu
 
         # handle Algorithm Menu
         elif currentMenu == AlgMenu and menuChoice != 'x':
@@ -75,17 +88,37 @@ def main():
             elif optionIndex >= 0:
                 algorithm = ALGORITHMS[optionIndex]
                 try:
-                    hasher = Hasher(userInput, algorithm)
+                    hasher = Hasher(userInput, algorithm, isFile)
                     hash_value = hasher.hash()
-                    print(f"\nInput: {userInput}")
+                    if isFile:
+                        print(f"\nFile: {userInput}")
+                    else:
+                        displayInput = userInput if len(userInput) < 50 else userInput[:47] + '...'
+                        print(f"\nInput: {displayInput}")
                     print(f"Algorithm: {algorithm}")
                     print(f"Hash: {hash_value}\n")
                     currentMenu = MainMenu  # Return to main menu
+                    userInput = None
+                    isFile = False
+                except FileNotFoundError:
+                    print("[ERROR] File not found. Please check the path.")
+                    currentMenu = MainMenu
+                    userInput = None
+                    isFile = False
+                except PermissionError:
+                    print("[ERROR] Permission denied. Unable to access file.")
+                    currentMenu = MainMenu
+                    userInput = None
+                    isFile = False
                 except ValueError as e:
                     print(f"[ERROR] {e}")
                     currentMenu = MainMenu
+                    userInput = None
+                    isFile = False
                 except Exception as e:
                     print(f"[ERROR] Unexpected error: {e}")
                     currentMenu = MainMenu
+                    userInput = None
+                    isFile = False
 if __name__ == '__main__':
     main()

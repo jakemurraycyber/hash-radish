@@ -4,7 +4,7 @@ input, and return the hash value of the input.
 Library:
     hashlib from std lib.
 Inputs:
-    User Input
+    User Input or File Input
     Hashing algorithm selection
 
 Returns:
@@ -21,6 +21,8 @@ class Hasher:
 
     def encodeInput(self) -> bytes:
         # Encode input to be hashed
+        if self.isFile:
+            raise ValueError("Cannot encode file path as string input.")
         return self.input.encode('utf-8')
     
 
@@ -31,23 +33,33 @@ class Hasher:
         h.update(encodedInput)
         return h.hexdigest()
     
-    def hashFile(self, chunkSize: int = 4096) -> str:
-        # Hash file in chunks
+    def hashFile(self, chunkSize: int = 8192) -> str:
+        # Hash file content in chunks
         if not self.isFile:
             raise ValueError("Input is not a filepath.")
         h = hashlib.new(self.algorithm, usedforsecurity=True)
-        with open(self.input, 'rb') as file:
-            while True:
-                chunk = file.read(chunkSize)
-                if not chunk:
-                    break
-                h.update(chunk)
-        return h.hexdigest()
+        try:
+            with open(self.input, 'rb') as file:
+                while True:
+                    chunk = file.read(chunkSize)
+                    if not chunk:
+                        break
+                    h.update(chunk)
+            return h.hexdigest()
+        except FileNotFoundError:
+            raise FileNotFoundError("File not found.")
+        except PermissionError:
+            raise PermissionError("Permission denied.")
+        except Exception as e:
+            raise Exception(f"Failed to hash file: {e}")
 
     def hash(self) -> str:
         # This method is just for convenience, combining 
         # encoding and hashing methods
-        encoded = self.encodeInput()
+        if self.isFile:
+            return self.hashFile()
+        else:
+            encoded = self.encodeInput()
         return self.hashEncodedInput(encoded)
 
 __all__ = ['Hasher']  
