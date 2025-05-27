@@ -15,7 +15,9 @@ class Menu:
         for option in self.options:
             print(f"{str(optionCounter)}. {option.title()}")
             optionCounter += 1
-        print('"exit" to terminate program')
+        if isinstance(self, SubMenu):
+            print('"b" to go back to Main Menu')
+        print('"x" to quit Hash Radish')
 
     def addOption(self, option: str) -> None:
         self.options.append(option)
@@ -23,10 +25,13 @@ class Menu:
     def getOptionIndex(self, choice: str) -> int:
         # This is the method that maps user input ("1") to one of the menu items
         # if the input is invalid, it returns -1
-        index = int(choice) -1
-        if 0 <= index < len(self.options):
-            return index
-        else:
+        try:
+            index = int(choice) -1
+            if 0 <= index < len(self.options):
+                return index
+            else:
+                return -1
+        except ValueError:
             return -1
 
 
@@ -40,22 +45,3 @@ class SubMenu(Menu):
         return self.parent
     
 __all__ = ['SubMenu', 'Menu']
-
-'''
-# TESTING
-mainOptions = [
-    '1. user input',
-    '2. file input',
-    '3. line input'
-    ]
-
-mainMenu = Menu('Main Menu', mainOptions)
-mainMenu.addOption(('"x" to exit'))
-currentMenu = mainMenu
-currentMenu.displayMenu()
-
-algOptions = ["1. SHA512"]
-algMenu = SubMenu(mainMenu, "Algorithm Menu", algOptions)
-currentMenu = algMenu
-currentMenu.displayMenu()
-'''

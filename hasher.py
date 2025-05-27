@@ -37,15 +37,4 @@ class Hasher:
         encoded = self.encodeInput()
         return self.hashEncodedInput(encoded)
 
-__all__ = ['Hasher']    
-
-
-'''
-# TESTING
-name = 'jake'
-algorithm = 'sha3_256'
-newHasher = Hasher(name, algorithm)
-encoded = newHasher.encodeInput()
-newHash = newHasher.hashEncodedInput(encoded)
-print(newHash)
-'''
+__all__ = ['Hasher']  

@@ -6,30 +6,23 @@
 # By: Jake Murray
 #
 ##########################
-import hasher
-import menus
+from hasher import Hasher
+from menus import Menu, SubMenu
 
-def hasher(userInput: str, algorithm: str) -> str | None:
-    '''
-    Generate a hash value using the proveded input
-    and algorithm.
+def getMenuChoice() -> str:
+    menuChoice: str = str(input('\n>> ').lower().strip())
+    return menuChoice
 
-    Arguments:
-        User Input
-        Hashing Algorithm
-
-    This function takes user input and a user selected algorithm.
-    It then returns the hash value. No side-effects.
-
-    (Eventually file input will be implemented, along
-    with relevant exception handlers.)
-
-    Return:
-        Generated hash string.
-    '''
-
+def main():
+    # Initialize Menus and Constants
     # List of available hash algorithms
-    # User can either type out algorithm, or enter the relevant number selection.
+    
+    MAINTITLE = 'Hash Radish - Main Menu'
+    MAINOPTIONS = ['User Input', 'File Input']
+
+    MainMenu = Menu(MAINTITLE, MAINOPTIONS)
+
+    ALGTITLE = 'Algorithm Menu'
     ALGORITHMS = [
             'sha224',
             'sha256',
@@ -40,38 +33,59 @@ def hasher(userInput: str, algorithm: str) -> str | None:
             'sha3-384',
             'sha3-512'
     ]
+    AlgMenu = SubMenu(MainMenu, ALGTITLE, ALGORITHMS)
 
-    # Check for zero input
-    if not userInput:
-        print(" [ERROR] No input provided.")
-        return None
+    # Set initial user choice, active menu, and start program loop
+    currentMenu = MainMenu
+    menuChoice = ''
 
-    # Check for valid algorithm selection
-    if algorithm not in ALGORITHMS:
-        print(f"[ERROR] {algorithm} is not a valid selection.")
+    while menuChoice != 'x':
+        currentMenu.displayMenu()
+        menuChoice = getMenuChoice()
 
-    try:
-        # Convert unserInput into bytes
-        encodedInput: bytes = userInput.encode('utf-8')
+        # get index number of user choice
+        optionIndex = currentMenu.getOptionIndex(menuChoice)
 
-        # Create hasher object
-        hasher: object = ALGORITHMS[algorithm]()
+        # Handle exit
+        if menuChoice == 'x':
+            print('Goodbye.')
+            continue
 
-        # Hash the encoded input
-        hasher.update(encodedInput)
+        # Handle return to main menu
+        elif menuChoice == 'b':
+            currentMenu = MainMenu
+            continue
+        
+        # Handle Main Menu
+        if currentMenu == MainMenu and menuChoice != 'x':
+            if optionIndex == 0: # index of 'User Input'
+                userInput = str(input("What would you like to hash?\n>> ")).strip()
+                if not userInput:
+                    print("[ERROR] No input provided.")
+                    continue
+                currentMenu = AlgMenu
+            elif optionIndex == 1: # File input not implemented yet
+                print("This functionality is still in the works.")
+                continue
 
-        return hasher.hexdigest()
-
-    except UnicodeEncodeError:
-        print("[ERROR] Your input could not be encoded.")
-        return None
-    except Exception as error:
-        print(f"[ERROR] {error}")
-        return None
-
-
-def main():
-    return None
-
+        # handle Algorithm Menu
+        elif currentMenu == AlgMenu and menuChoice != 'x':
+            if menuChoice == 'back':
+                currentMenu = currentMenu.goBack()
+            elif optionIndex >= 0:
+                algorithm = ALGORITHMS[optionIndex]
+                try:
+                    hasher = Hasher(userInput, algorithm)
+                    hash_value = hasher.hash()
+                    print(f"\nInput: {userInput}")
+                    print(f"Algorithm: {algorithm}")
+                    print(f"Hash: {hash_value}\n")
+                    currentMenu = MainMenu  # Return to main menu
+                except ValueError as e:
+                    print(f"[ERROR] {e}")
+                    currentMenu = MainMenu
+                except Exception as e:
+                    print(f"[ERROR] Unexpected error: {e}")
+                    currentMenu = MainMenu
 if __name__ == '__main__':
     main()
