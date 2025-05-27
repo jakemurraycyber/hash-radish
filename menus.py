@@ -23,10 +23,12 @@ class Menu:
         self.options.append(option)
 
     def getOptionIndex(self, choice: str) -> int:
-        # This is the method that maps user input ("1") to one of the menu items
-        # if the input is invalid, it returns -1
+        '''
+        This is the method that maps user input ("1") to one of the menu items
+        if the input is invalid, it returns -1
+        '''
         try:
-            index = int(choice) -1
+            index = int(choice) - 1
             if 0 <= index < len(self.options):
                 return index
             else:
@@ -36,12 +38,14 @@ class Menu:
 
 
 class SubMenu(Menu):
-    def __init__(self, parent: 'Menu', title: str, options: list[str] = []) -> None:
+    def __init__(self, parent: 'Menu', title: str,
+                 options: list[str] = []) -> None:
         super().__init__(title, options)
         self.parent = parent
 
     # return to previous/parent menu
     def goBack(self) -> 'Menu':
         return self.parent
-    
+
+
 __all__ = ['SubMenu', 'Menu']
