@@ -24,14 +24,23 @@ class Hasher:
         return self.input.encode('utf-8')
     
 
-    def hashEncodedInput(self, endodedInput: bytes) -> str:
+    def hashEncodedInput(self, encodedInput: bytes) -> str:
         # Create a hash object of the requested algorithm and takes the
         # input of encodedInput and returns the hash value.
         h = hashlib.new(self.algorithm, usedforsecurity=True)
-        h.update(endodedInput)
+        h.update(encodedInput)
         return h.hexdigest()
     
+    def hash(self) -> str:
+        # This method is just for convenience, combining 
+        # encoding and hashing methods
+        encoded = self.encodeInput()
+        return self.hashEncodedInput(encoded)
 
+__all__ = ['Hasher']    
+
+
+'''
 # TESTING
 name = 'jake'
 algorithm = 'sha3_256'
@@ -39,3 +48,4 @@ newHasher = Hasher(name, algorithm)
 encoded = newHasher.encodeInput()
 newHash = newHasher.hashEncodedInput(encoded)
 print(newHash)
+'''
