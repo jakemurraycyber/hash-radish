@@ -11,22 +11,21 @@ from menus import Menu, SubMenu
 import os
 
 
-def getMenuChoice() -> str:
-    menuChoice: str = str(input('\n>> ').lower().strip())
-    return menuChoice
+def get_menu_choice() -> str:
+    menu_choice = input('\n>> ').lower().strip()
+    return menu_choice
 
 
 def main():
     # Initialize Menus and Constants
-    # List of available hash algorithms
 
-    MAINTITLE = 'Hash Radish - Main Menu'
-    MAINOPTIONS = ['User Input', 'File Input']
+    MAIN_MENU_TITLE = 'Hash Radish - Main Menu'
+    MAIN_MENU_OPTIONS = ['User Input', 'File Input']
 
-    MainMenu = Menu(MAINTITLE, MAINOPTIONS)
+    main_menu = Menu(MAIN_MENU_TITLE, MAIN_MENU_OPTIONS)
 
-    ALGTITLE = 'Algorithm Menu'
-    ALGORITHMS = [
+    ALGORITHM_MENU_TITLE = 'Algorithm Menu'
+    HASH_ALGORITHMS = [
             'sha224',
             'sha256',
             'sha384',
@@ -36,98 +35,98 @@ def main():
             'sha3-384',
             'sha3-512'
     ]
-    AlgMenu = SubMenu(MainMenu, ALGTITLE, ALGORITHMS)
+    algorithm_menu = SubMenu(main_menu, ALGORITHM_MENU_TITLE, HASH_ALGORITHMS)
 
     # Set initial user choice, active menu, and start program loop
-    currentMenu: 'Menu' = MainMenu
-    menuChoice: str = ''
-    userInput: str | None = None  # stores user input or filepath
-    isFile: bool = False  # tracks if user input is a filepath
+    current_menu: Menu = main_menu
+    menu_choice: str = ''
+    user_input: str | None = None  # stores user input or filepath
+    is_file: bool = False  # tracks if user input is a filepath
 
-    while menuChoice != 'x':
-        currentMenu.displayMenu()
-        menuChoice = getMenuChoice()
+    while menu_choice != 'x':
+        current_menu.display_menu()
+        menu_choice = get_menu_choice()
 
         # get index number of user choice
-        optionIndex = currentMenu.getOptionIndex(menuChoice)
-        if optionIndex == -1 and menuChoice not in ('x', 'b'):
+        option_index = current_menu.get_option_index(menu_choice)
+        if option_index == -1 and menu_choice not in ('x', 'b'):
             print("[ERROR] Invalid option selected."
                   "Please choose a valid option.")
             continue
         # Handle exit
-        if menuChoice == 'x':
+        if menu_choice == 'x':
             print('Goodbye.')
             continue
 
         # Handle return to main menu
-        elif menuChoice == 'b':
-            currentMenu = MainMenu
-            userInput = None
-            isFile = False
+        elif menu_choice == 'b':
+            current_menu = main_menu
+            user_input = None
+            is_file = False
             continue
 
         # Handle Main Menu
-        if currentMenu == MainMenu and menuChoice != 'x':
-            if optionIndex == 0:  # index of 'User Input'
-                userInput = str(input
-                                ("What would you like to hash?\n>> ")).strip()
-                if not userInput:
+        if current_menu == main_menu and menu_choice != 'x':
+            if option_index == 0:  # index of 'User Input'
+                user_input = str(input
+                                 ("What would you like to hash?\n>> ")).strip()
+                if not user_input:
                     print("[ERROR] No input provided.")
                     continue
-                currentMenu = AlgMenu
-            elif optionIndex == 1:
-                filePath = str(input
-                               ("Enter the file path to hash:\n>> ")).strip()
-                if not filePath:
+                current_menu = algorithm_menu
+            elif option_index == 1:
+                file_path = str(input
+                                ("Enter the file path to hash:\n>> ")).strip()
+                if not file_path:
                     print("[ERROR] No file path provided.")
                     continue
-                if not os.path.isfile(filePath):
+                if not os.path.isfile(file_path):
                     print("[ERROR] Invalid file path or file does not exist.")
                     continue
-                userInput = filePath
-                isFile = True
-                currentMenu = AlgMenu
+                user_input = file_path
+                is_file = True
+                current_menu = algorithm_menu
 
         # handle Algorithm Menu
-        elif currentMenu == AlgMenu and menuChoice != 'x':
-            if menuChoice == 'b':
-                currentMenu = currentMenu.goBack()
-            elif optionIndex >= 0:
-                algorithm = ALGORITHMS[optionIndex]
+        elif current_menu == algorithm_menu and menu_choice != 'x':
+            if menu_choice == 'b':
+                current_menu = current_menu.go_back()
+            elif option_index >= 0:
+                algorithm = HASH_ALGORITHMS[option_index]
                 try:
-                    hasher = Hasher(userInput, algorithm, isFile)
-                    hash_value = hasher.hash()
-                    if isFile:
-                        print(f"\nFile: {userInput}")
+                    hasher = Hasher(user_input, algorithm, is_file)
+                    hash_value = hasher.compute_hash()
+                    if is_file:
+                        print(f"\nFile: {user_input}")
                     else:
-                        displayInput = userInput if len(userInput) < 50 \
-                            else userInput[:47] + '...'
-                        print(f"\nInput: {displayInput}")
+                        display_input = user_input if len(user_input) < 50 \
+                            else user_input[:47] + '...'
+                        print(f"\nInput: {display_input}")
                     print(f"Algorithm: {algorithm}")
                     print(f"Hash: {hash_value}\n")
-                    currentMenu = MainMenu  # Return to main menu
-                    userInput = None
-                    isFile = False
+                    current_menu = main_menu  # Return to main menu
+                    user_input = None
+                    is_file = False
                 except FileNotFoundError:
                     print("[ERROR] File not found. Please check the path.")
-                    currentMenu = MainMenu
-                    userInput = None
-                    isFile = False
+                    current_menu = main_menu
+                    user_input = None
+                    is_file = False
                 except PermissionError:
                     print("[ERROR] Permission denied. Unable to access file.")
-                    currentMenu = MainMenu
-                    userInput = None
-                    isFile = False
+                    current_menu = main_menu
+                    user_input = None
+                    is_file = False
                 except ValueError as e:
                     print(f"[ERROR] {e}")
-                    currentMenu = MainMenu
-                    userInput = None
-                    isFile = False
+                    current_menu = main_menu
+                    user_input = None
+                    is_file = False
                 except Exception as e:
                     print(f"[ERROR] Unexpected error: {e}")
-                    currentMenu = MainMenu
-                    userInput = None
-                    isFile = False
+                    current_menu = main_menu
+                    user_input = None
+                    is_file = False
 
 
 if __name__ == '__main__':

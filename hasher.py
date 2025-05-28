@@ -8,40 +8,39 @@ Inputs:
     Hashing algorithm selection
 
 Returns:
-    Hash value in hexidecimal format
+    Hash value in hexadecimal format
 '''
-
 import hashlib
 
+
 class Hasher:
-    def __init__(self, input: str, algorithm: str, isFile: bool) -> None:
-        self.input = input
+    def __init__(self, input_data: str, algorithm: str, is_file: bool) -> None:
+        self.input_data = input_data
         self.algorithm = algorithm
-        self.isFile = isFile # flag to indicate if input is a file
+        self.is_file = is_file  # flag to indicate if input is a file
 
-    def encodeInput(self) -> bytes:
+    def encode_input(self) -> bytes:
         # Encode input to be hashed
-        if self.isFile:
+        if self.is_file:
             raise ValueError("Cannot encode file path as string input.")
-        return self.input.encode('utf-8')
-    
+        return self.input_data.encode('utf-8')
 
-    def hashEncodedInput(self, encodedInput: bytes) -> str:
+    def hash_encoded_input(self, encoded_input: bytes) -> str:
         # Create a hash object of the requested algorithm and takes the
         # input of encodedInput and returns the hash value.
         h = hashlib.new(self.algorithm, usedforsecurity=True)
-        h.update(encodedInput)
+        h.update(encoded_input)
         return h.hexdigest()
-    
-    def hashFile(self, chunkSize: int = 8192) -> str:
+
+    def hash_file(self, chunk_size: int = 8192) -> str:
         # Hash file content in chunks
-        if not self.isFile:
+        if not self.is_file:
             raise ValueError("Input is not a filepath.")
         h = hashlib.new(self.algorithm, usedforsecurity=True)
         try:
-            with open(self.input, 'rb') as file:
+            with open(self.input_data, 'rb') as file:
                 while True:
-                    chunk = file.read(chunkSize)
+                    chunk = file.read(chunk_size)
                     if not chunk:
                         break
                     h.update(chunk)
@@ -53,13 +52,14 @@ class Hasher:
         except Exception as e:
             raise Exception(f"Failed to hash file: {e}")
 
-    def hash(self) -> str:
-        # This method is just for convenience, combining 
+    def compute_hash(self) -> str:
+        # This method is just for convenience, combining
         # encoding and hashing methods
-        if self.isFile:
-            return self.hashFile()
+        if self.is_file:
+            return self.hash_file()
         else:
-            encoded = self.encodeInput()
-        return self.hashEncodedInput(encoded)
+            encoded = self.encode_input()
+        return self.hash_encoded_input(encoded)
 
-__all__ = ['Hasher']  
+
+__all__ = ['Hasher']
